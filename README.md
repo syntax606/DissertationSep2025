@@ -119,6 +119,7 @@ pip install -r requirements.txt
 
 Run an analysis script, e.g.:
 python analysis/bootstrap_confidence_intervals.py --bootstrap 1000
+```
 
 Due to size and copyright restrictions, full transcripts are hosted on Google Cloud Storage. Researchers may request access by contacting me.
 
