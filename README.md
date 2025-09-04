@@ -16,7 +16,7 @@ All scripts are modular and reproducible for research and dissertation work.
 
 ---
 
-## 📂 Repository Structur
+## 📂 Repository Structure
 
 ```text
 podcast-influence-analysis/
@@ -34,6 +34,49 @@ podcast-influence-analysis/
 │   └── Methodology_Master_Synopsis.md
 │
 └── README.md   # This file
+
+---
+
+## 📊 Data Availability
+
+This repository contains curated outputs from the full dissertation pipeline.  
+The raw podcast transcripts and bulk per-episode JSONs are stored in Google Cloud Storage (GCS) due to size, but representative and summary files are included here.
+
+### `data/` Folder Overview
+
+- **`samples/`**  
+  Small example outputs for transparency.  
+  - `sample_output.json` – representative enhanced transcript analysis  
+  - `sample_tenet.json` – Tenet baseline example
+
+- **`stats/`**  
+  Aggregated statistical outputs.  
+  - `master_stats_orientation_summary.csv` – normalized comparison across orientations  
+  - `master_stats_per_show.csv` – per-show influence intensity scores  
+  - `dissertation_stats_subset.json` – subset used in dissertation tables  
+  - `figure_orientation_ci.png` – CI visualization
+
+- **`dissertation/`**  
+  Final curated results used in the dissertation.  
+  - `dissertation_key_findings.md` – high-level summary  
+  - `political_figures_analysis.json` – entity-level blame & influence  
+  - `russia_analysis_results.json` – Russia-specific analysis  
+  - `framing_analysis_visualization.png` – persuasive framing visualization  
+  - `causal_analysis_blame_separated.png` – causal blame separation
+
+- **`testing/`**  
+  Methodology validation and bootstrap runs.  
+  - `bootstrap_methodology_transparent.txt` – full bootstrap CI documentation  
+  - `computational_performance_formatted.txt` – runtime performance validation  
+  - `per_show_influence_scores.csv` – episode-level influence scores  
+  - `weighting_justification.json` / `weighting_analysis.png` – equal-weighting validation
+
+### 🔗 Larger Data
+
+- Full transcripts (`enriched_transcripts/`) and batch enhanced analyses (`enhanced_analysis/`) are stored in the **private GCS bucket**:  
+  `gs://podcast-dissertation-audio/`  
+- Contact the author if access is required for replication.
+
 ---
 
 ## 🚀 Key Scripts
