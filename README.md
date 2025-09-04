@@ -16,7 +16,9 @@ All scripts are modular and reproducible for research and dissertation work.
 
 ---
 
-## 📂 Repository Structure
+## 📂 Repository Structur
+
+```text
 podcast-influence-analysis/
 ├── analysis/   # Core analysis scripts
 │   ├── meantime_transcribe.py
