@@ -1,0 +1,179 @@
+{
+  "tenet": {
+    "files_processed": 30,
+    "total_segments": 6259,
+    "russia_mentions": 86,
+    "mention_rate": 1.374021409170794,
+    "emotion_distribution": {
+      "neutral": 56,
+      "anger": 13,
+      "surprise": 8,
+      "disgust": 3,
+      "joy": 1,
+      "fear": 2,
+      "sadness": 3
+    },
+    "sentiment_distribution": {
+      "NEGATIVE": 63,
+      "POSITIVE": 23
+    },
+    "persuasive_techniques": {
+      "fear_appeal": 20,
+      "loaded_language": 1
+    },
+    "sample_contexts": [
+      {
+        "text": "tied for second with Bangladesh with only Russia beating them outright let's read this here each of these requests can contain any number of",
+        "emotion": "neutral",
+        "sentiment": "NEGATIVE",
+        "techniques": []
+      },
+      {
+        "text": "Russian agents with no proof they had armed services committees in the house where they called us disinformation agents and admitted that",
+        "emotion": "anger",
+        "sentiment": "NEGATIVE",
+        "techniques": []
+      },
+      {
+        "text": "naive for a long long time and now they're taking this thing they used against the Russians and foreign mafas and they're trying to use it",
+        "emotion": "neutral",
+        "sentiment": "NEGATIVE",
+        "techniques": []
+      },
+      {
+        "text": "with Ukraine nobody's Above the Law that's the 2024 version not even the president's son not even he is above the law see Trump can't",
+        "emotion": "neutral",
+        "sentiment": "NEGATIVE",
+        "techniques": []
+      },
+      {
+        "text": "zansky in Ukraine I noticed we keep sending him unlimited magazines and unlimited shells so it's not nobody I mean come on we all we all",
+        "emotion": "surprise",
+        "sentiment": "NEGATIVE",
+        "techniques": []
+      }
+    ]
+  },
+  "right": {
+    "files_processed": 30,
+    "total_segments": 41974,
+    "russia_mentions": 1007,
+    "mention_rate": 2.399104207366465,
+    "emotion_distribution": {
+      "neutral": 708,
+      "anger": 85,
+      "surprise": 52,
+      "fear": 50,
+      "disgust": 68,
+      "sadness": 18,
+      "unknown": 1,
+      "joy": 25
+    },
+    "sentiment_distribution": {
+      "NEGATIVE": 556,
+      "POSITIVE": 450,
+      "unknown": 1
+    },
+    "persuasive_techniques": {
+      "fear_appeal": 130,
+      "loaded_language": 22,
+      "causal_oversimplification": 9,
+      "whataboutism": 5
+    },
+    "sample_contexts": [
+      {
+        "text": " France just decided that they are going to send consultants in to help Ukraine learn about war, learn how to fight it.",
+        "emotion": "neutral",
+        "sentiment": "NEGATIVE",
+        "techniques": [
+          "fear_appeal"
+        ]
+      },
+      {
+        "text": " So maybe Ukraine will just finally say, you know what, let's get to the peace table.",
+        "emotion": "neutral",
+        "sentiment": "NEGATIVE",
+        "techniques": []
+      },
+      {
+        "text": " Russia just parked two warships, one in Venezuela and the other one off the coast of Cuba.",
+        "emotion": "neutral",
+        "sentiment": "NEGATIVE",
+        "techniques": [
+          "fear_appeal"
+        ]
+      },
+      {
+        "text": " We're being hacked into at even the local level all the time by China and Russia.",
+        "emotion": "anger",
+        "sentiment": "NEGATIVE",
+        "techniques": []
+      },
+      {
+        "text": " Now Joe Biden is there on the tarmac waiting for the American citizens imprisoned in Russia.",
+        "emotion": "neutral",
+        "sentiment": "NEGATIVE",
+        "techniques": []
+      }
+    ]
+  },
+  "left": {
+    "files_processed": 30,
+    "total_segments": 29855,
+    "russia_mentions": 438,
+    "mention_rate": 1.4670909395411154,
+    "emotion_distribution": {
+      "neutral": 270,
+      "joy": 10,
+      "anger": 45,
+      "fear": 22,
+      "disgust": 38,
+      "surprise": 24,
+      "sadness": 28,
+      "unknown": 1
+    },
+    "sentiment_distribution": {
+      "POSITIVE": 162,
+      "NEGATIVE": 275,
+      "unknown": 1
+    },
+    "persuasive_techniques": {
+      "fear_appeal": 62,
+      "causal_oversimplification": 11,
+      "whataboutism": 4,
+      "loaded_language": 4
+    },
+    "sample_contexts": [
+      {
+        "text": " And to have the balls to do that, to be president of Russia,",
+        "emotion": "neutral",
+        "sentiment": "POSITIVE",
+        "techniques": []
+      },
+      {
+        "text": " Met him many times, went to Moscow, had meetings with him.",
+        "emotion": "joy",
+        "sentiment": "POSITIVE",
+        "techniques": []
+      },
+      {
+        "text": " Pacific Northwest roaming and then eventually that Conan O'Brien fighting in the Ukraine",
+        "emotion": "neutral",
+        "sentiment": "POSITIVE",
+        "techniques": []
+      },
+      {
+        "text": " Inflation, yes, eggs, Russia.",
+        "emotion": "neutral",
+        "sentiment": "NEGATIVE",
+        "techniques": []
+      },
+      {
+        "text": " The serious thing is the combination of that and this, this stuff they are doing with Ukraine right now,",
+        "emotion": "anger",
+        "sentiment": "POSITIVE",
+        "techniques": []
+      }
+    ]
+  }
+}

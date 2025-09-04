@@ -1,0 +1,576 @@
+{
+  "trump": {
+    "tenet": {
+      "files_processed": 40,
+      "total_segments": 3662,
+      "mentions": 285,
+      "mention_rate": 7.7826324412889125,
+      "emotion_distribution": {
+        "neutral": 159,
+        "fear": 37,
+        "surprise": 33,
+        "anger": 28,
+        "joy": 12,
+        "disgust": 8,
+        "sadness": 8
+      },
+      "sentiment_distribution": {
+        "POSITIVE": 98,
+        "NEGATIVE": 187
+      },
+      "persuasive_techniques": {
+        "fear_appeal": 17,
+        "causal_oversimplification": 7,
+        "loaded_language": 5,
+        "whataboutism": 4
+      },
+      "sample_contexts": [
+        {
+          "text": "I I my my goal on the channel since it's Finance based is just middle middle middle right now Trump is leading in every poll by you know",
+          "emotion": "neutral",
+          "sentiment": "POSITIVE",
+          "techniques": []
+        },
+        {
+          "text": "forward November of 2024 and yes we went through hell uh and Donald Trump contributed to that right he contributed so both Republicans and",
+          "emotion": "neutral",
+          "sentiment": "POSITIVE",
+          "techniques": [
+            "fear_appeal"
+          ]
+        },
+        {
+          "text": "stocks um election yeah oh social and election social kind of Vibes yeah I think I this part sounds extreme but I think if Trump's not on",
+          "emotion": "neutral",
+          "sentiment": "NEGATIVE",
+          "techniques": [
+            "loaded_language"
+          ]
+        }
+      ]
+    },
+    "right": {
+      "files_processed": 40,
+      "total_segments": 59406,
+      "mentions": 1733,
+      "mention_rate": 2.9172137494529173,
+      "emotion_distribution": {
+        "disgust": 105,
+        "neutral": 1207,
+        "surprise": 136,
+        "anger": 124,
+        "sadness": 21,
+        "fear": 96,
+        "unknown": 1,
+        "joy": 43
+      },
+      "sentiment_distribution": {
+        "NEGATIVE": 945,
+        "POSITIVE": 787,
+        "unknown": 1
+      },
+      "persuasive_techniques": {
+        "fear_appeal": 88,
+        "loaded_language": 23,
+        "whataboutism": 22,
+        "causal_oversimplification": 15
+      },
+      "sample_contexts": [
+        {
+          "text": " Oh, it became sanctuary cities because we hated Donald Trump.",
+          "emotion": "disgust",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        },
+        {
+          "text": " Donald Trump is the only president who has lost more jobs than he created.",
+          "emotion": "neutral",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        },
+        {
+          "text": " And by the way, isn't that what you're hammering Donald Trump for saying that,",
+          "emotion": "surprise",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        }
+      ]
+    },
+    "left": {
+      "files_processed": 40,
+      "total_segments": 40452,
+      "mentions": 1203,
+      "mention_rate": 2.9738949866508455,
+      "emotion_distribution": {
+        "neutral": 832,
+        "surprise": 81,
+        "fear": 53,
+        "disgust": 72,
+        "anger": 79,
+        "joy": 60,
+        "sadness": 25,
+        "unknown": 1
+      },
+      "sentiment_distribution": {
+        "NEGATIVE": 651,
+        "POSITIVE": 551,
+        "unknown": 1
+      },
+      "persuasive_techniques": {
+        "fear_appeal": 49,
+        "whataboutism": 13,
+        "loaded_language": 12,
+        "causal_oversimplification": 8
+      },
+      "sample_contexts": [
+        {
+          "text": " Is it going to be Biden and Trump?",
+          "emotion": "neutral",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        },
+        {
+          "text": " And then Trump, well, I think he's extremely popular and just like objectively, you don't",
+          "emotion": "neutral",
+          "sentiment": "POSITIVE",
+          "techniques": [
+            "loaded_language"
+          ]
+        },
+        {
+          "text": " men in my life that stole the oxygen out of the room diddy trump Hugh Heffner um everyone else is",
+          "emotion": "neutral",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        }
+      ]
+    }
+  },
+  "biden": {
+    "tenet": {
+      "files_processed": 40,
+      "total_segments": 3662,
+      "mentions": 268,
+      "mention_rate": 7.318405243036592,
+      "emotion_distribution": {
+        "neutral": 164,
+        "surprise": 35,
+        "sadness": 15,
+        "fear": 15,
+        "anger": 23,
+        "disgust": 9,
+        "joy": 7
+      },
+      "sentiment_distribution": {
+        "NEGATIVE": 201,
+        "POSITIVE": 67
+      },
+      "persuasive_techniques": {
+        "fear_appeal": 21,
+        "whataboutism": 9,
+        "causal_oversimplification": 5,
+        "loaded_language": 4
+      },
+      "sample_contexts": [
+        {
+          "text": "election as well and towards Republicans or towards Biden because Biden really interesting yeah and and I I don't care who the president is",
+          "emotion": "neutral",
+          "sentiment": "NEGATIVE",
+          "techniques": [
+            "fear_appeal"
+          ]
+        },
+        {
+          "text": "you think that'll swing in the favor of Biden it will help Biden uh how are they going to do that well I mean it I mean obviously the the",
+          "emotion": "neutral",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        },
+        {
+          "text": "processing like how they couldn't pin that all on Biden and if it's not going to feel like it's over until the next president wouldn't they",
+          "emotion": "neutral",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        }
+      ]
+    },
+    "right": {
+      "files_processed": 40,
+      "total_segments": 59406,
+      "mentions": 890,
+      "mention_rate": 1.498165168501498,
+      "emotion_distribution": {
+        "neutral": 657,
+        "disgust": 72,
+        "joy": 29,
+        "anger": 26,
+        "sadness": 34,
+        "fear": 27,
+        "surprise": 43,
+        "unknown": 2
+      },
+      "sentiment_distribution": {
+        "POSITIVE": 366,
+        "NEGATIVE": 522,
+        "unknown": 2
+      },
+      "persuasive_techniques": {
+        "fear_appeal": 33,
+        "loaded_language": 17,
+        "causal_oversimplification": 15,
+        "whataboutism": 12
+      },
+      "sample_contexts": [
+        {
+          "text": " Okay, Biden's got this thing under control.",
+          "emotion": "neutral",
+          "sentiment": "POSITIVE",
+          "techniques": []
+        },
+        {
+          "text": " Biden lied through his teeth over and over and over",
+          "emotion": "disgust",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        },
+        {
+          "text": " And believe me, Biden lied there as well.",
+          "emotion": "disgust",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        }
+      ]
+    },
+    "left": {
+      "files_processed": 40,
+      "total_segments": 40452,
+      "mentions": 394,
+      "mention_rate": 0.973993869277168,
+      "emotion_distribution": {
+        "neutral": 292,
+        "surprise": 22,
+        "disgust": 26,
+        "sadness": 22,
+        "joy": 11,
+        "fear": 7,
+        "anger": 14
+      },
+      "sentiment_distribution": {
+        "NEGATIVE": 195,
+        "POSITIVE": 199
+      },
+      "persuasive_techniques": {
+        "fear_appeal": 15,
+        "causal_oversimplification": 5,
+        "loaded_language": 4,
+        "whataboutism": 4
+      },
+      "sample_contexts": [
+        {
+          "text": " Is it going to be Biden and Trump?",
+          "emotion": "neutral",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        },
+        {
+          "text": " dangerous kind of decline. A neurologist said this. I wish I could remember who it was. Joe Biden",
+          "emotion": "surprise",
+          "sentiment": "NEGATIVE",
+          "techniques": [
+            "loaded_language",
+            "fear_appeal"
+          ]
+        },
+        {
+          "text": " row Biden County in 2020. So Brantley County went for Trump by more than 90 percent. Clayton",
+          "emotion": "neutral",
+          "sentiment": "POSITIVE",
+          "techniques": []
+        }
+      ]
+    }
+  },
+  "harris": {
+    "tenet": {
+      "files_processed": 40,
+      "total_segments": 3662,
+      "mentions": 93,
+      "mention_rate": 2.539595849262698,
+      "emotion_distribution": {
+        "neutral": 61,
+        "surprise": 15,
+        "anger": 7,
+        "joy": 5,
+        "fear": 4,
+        "sadness": 1
+      },
+      "sentiment_distribution": {
+        "POSITIVE": 34,
+        "NEGATIVE": 59
+      },
+      "persuasive_techniques": {
+        "fear_appeal": 5,
+        "loaded_language": 1,
+        "causal_oversimplification": 1,
+        "whataboutism": 1
+      },
+      "sample_contexts": [
+        {
+          "text": "CONCLUDED THAT THE WHITE HOUSE PARTY, THE DEMOCRATS NOW REPRESENTED BY KAMALA HARRIS, WOULD NOT LOSE PREDICTION IS KAMALA HARRIS WILL BE A",
+          "emotion": "neutral",
+          "sentiment": "POSITIVE",
+          "techniques": []
+        },
+        {
+          "text": "PRECEDENT BREAKING PRESIDENT OF THE UNITED STATES. U.S. HISTORY. >> ALLEN, WHEN KAMALA HARRIS TOOK OVER AS THE TOP NOMINEE FOR THE",
+          "emotion": "neutral",
+          "sentiment": "POSITIVE",
+          "techniques": []
+        },
+        {
+          "text": "KAMALA >> ABSOLUTELY. FIRST OF ALL, WAS THE FACT THAT DEMOCRATS FINALLY GOT A SPINE AND GOT THAT AVOIDED THE LOSS OF THE PARTY CONTEST KEY.",
+          "emotion": "surprise",
+          "sentiment": "POSITIVE",
+          "techniques": []
+        }
+      ]
+    },
+    "right": {
+      "files_processed": 40,
+      "total_segments": 59406,
+      "mentions": 600,
+      "mention_rate": 1.00999899000101,
+      "emotion_distribution": {
+        "neutral": 437,
+        "anger": 28,
+        "disgust": 33,
+        "fear": 21,
+        "surprise": 45,
+        "sadness": 16,
+        "joy": 18,
+        "unknown": 2
+      },
+      "sentiment_distribution": {
+        "POSITIVE": 246,
+        "NEGATIVE": 352,
+        "unknown": 2
+      },
+      "persuasive_techniques": {
+        "fear_appeal": 24,
+        "loaded_language": 16,
+        "whataboutism": 10,
+        "causal_oversimplification": 9
+      },
+      "sample_contexts": [
+        {
+          "text": " And the people managing this are Joe Biden and Kamala Harris.",
+          "emotion": "neutral",
+          "sentiment": "POSITIVE",
+          "techniques": []
+        },
+        {
+          "text": " And now you have to factor in that the Democrats have Kamala Harris.",
+          "emotion": "neutral",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        },
+        {
+          "text": " Can you imagine Kamala Harris against JD Vance?",
+          "emotion": "anger",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        }
+      ]
+    },
+    "left": {
+      "files_processed": 40,
+      "total_segments": 40452,
+      "mentions": 224,
+      "mention_rate": 0.5537427074063087,
+      "emotion_distribution": {
+        "neutral": 157,
+        "surprise": 13,
+        "anger": 11,
+        "disgust": 14,
+        "fear": 2,
+        "joy": 21,
+        "sadness": 4,
+        "unknown": 2
+      },
+      "sentiment_distribution": {
+        "POSITIVE": 120,
+        "NEGATIVE": 102,
+        "unknown": 2
+      },
+      "persuasive_techniques": {
+        "fear_appeal": 6,
+        "causal_oversimplification": 3,
+        "whataboutism": 2,
+        "loaded_language": 2
+      },
+      "sample_contexts": [
+        {
+          "text": " You know what Harrison Ford would be awesome.",
+          "emotion": "neutral",
+          "sentiment": "POSITIVE",
+          "techniques": []
+        },
+        {
+          "text": " Harrison Ford would be great.",
+          "emotion": "neutral",
+          "sentiment": "POSITIVE",
+          "techniques": []
+        },
+        {
+          "text": " I take Harrison Ford any day.",
+          "emotion": "neutral",
+          "sentiment": "POSITIVE",
+          "techniques": []
+        }
+      ]
+    }
+  },
+  "nato": {
+    "tenet": {
+      "files_processed": 40,
+      "total_segments": 3662,
+      "mentions": 6,
+      "mention_rate": 0.1638448935008192,
+      "emotion_distribution": {
+        "surprise": 1,
+        "anger": 1,
+        "neutral": 3,
+        "fear": 1
+      },
+      "sentiment_distribution": {
+        "POSITIVE": 1,
+        "NEGATIVE": 5
+      },
+      "persuasive_techniques": {
+        "fear_appeal": 1
+      },
+      "sample_contexts": [
+        {
+          "text": "a more practical level Washington Post just reported in the last hour that Senator Mark Warner is is assembling a group of senators together",
+          "emotion": "surprise",
+          "sentiment": "POSITIVE",
+          "techniques": [
+            "fear_appeal"
+          ]
+        },
+        {
+          "text": "Senator so what exactly makes these allegations against smirnov such a uniquely serious crime or smirnov such a unique Flight Risk cuz the",
+          "emotion": "anger",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        },
+        {
+          "text": "is bring us into that process because Senator Holly now has a whistleblower saying there was a Manpower request that was coming out of",
+          "emotion": "neutral",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        }
+      ]
+    },
+    "right": {
+      "files_processed": 40,
+      "total_segments": 59406,
+      "mentions": 108,
+      "mention_rate": 0.18179981820018182,
+      "emotion_distribution": {
+        "disgust": 7,
+        "neutral": 84,
+        "fear": 4,
+        "sadness": 4,
+        "anger": 3,
+        "joy": 2,
+        "surprise": 4
+      },
+      "sentiment_distribution": {
+        "NEGATIVE": 61,
+        "POSITIVE": 47
+      },
+      "persuasive_techniques": {
+        "fear_appeal": 8,
+        "causal_oversimplification": 2,
+        "loaded_language": 2,
+        "whataboutism": 1
+      },
+      "sample_contexts": [
+        {
+          "text": " No, Mr. President, when you were a lowly senator.",
+          "emotion": "disgust",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        },
+        {
+          "text": " there was rumors that he was the defensive coordinator, which is a role. It's a real role in a team.",
+          "emotion": "neutral",
+          "sentiment": "POSITIVE",
+          "techniques": []
+        },
+        {
+          "text": " you know, you can look at the odds on paper, right? And on paper, a guy like the Senator from",
+          "emotion": "neutral",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        }
+      ]
+    },
+    "left": {
+      "files_processed": 40,
+      "total_segments": 40452,
+      "mentions": 84,
+      "mention_rate": 0.20765351527736575,
+      "emotion_distribution": {
+        "neutral": 57,
+        "surprise": 8,
+        "anger": 6,
+        "disgust": 4,
+        "joy": 5,
+        "sadness": 2,
+        "fear": 2
+      },
+      "sentiment_distribution": {
+        "NEGATIVE": 39,
+        "POSITIVE": 45
+      },
+      "persuasive_techniques": {
+        "fear_appeal": 4,
+        "whataboutism": 1
+      },
+      "sample_contexts": [
+        {
+          "text": " mainstream, a senator and went back and watched a lot of his old podcast and Vance talked about",
+          "emotion": "neutral",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        },
+        {
+          "text": " Right? So the question is why are these senators just completely unable to sort of respect the",
+          "emotion": "surprise",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        },
+        {
+          "text": " these Democratic senators were thinking that they would give Trump more power by shutting down",
+          "emotion": "neutral",
+          "sentiment": "NEGATIVE",
+          "techniques": []
+        }
+      ]
+    }
+  },
+  "comparative_stats": {
+    "files_per_orientation": {
+      "tenet": 40,
+      "right": 40,
+      "left": 40
+    },
+    "segments_per_orientation": {
+      "tenet": 3662,
+      "right": 59406,
+      "left": 40452
+    }
+  }
+}

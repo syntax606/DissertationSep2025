@@ -1,0 +1,16 @@
+{
+  "n_episodes": 125,
+  "baseline": 5.45,
+  "influence_ratio_mean": 5.58392,
+  "influence_ratio_sd": 1.256203102049983,
+  "ci95": [
+    5.363697886469178,
+    5.804142113530822
+  ],
+  "amplification_factor": 1.0245724770642202,
+  "chi_square_any_technique": {
+    "chi2": 0.0,
+    "df": 0,
+    "cramers_v": 0.0
+  }
+}

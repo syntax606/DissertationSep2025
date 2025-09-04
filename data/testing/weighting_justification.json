@@ -1,0 +1,242 @@
+{
+  "sample_size": 520,
+  "orientations_present": {
+    "Left": 500,
+    "Foreign": 20
+  },
+  "weighting_schemes": {
+    "Equal (0.5, 0.5)": [
+      0.5,
+      0.5
+    ],
+    "Causal-heavy (0.7, 0.3)": [
+      0.7,
+      0.3
+    ],
+    "Persuasive-heavy (0.3, 0.7)": [
+      0.3,
+      0.7
+    ],
+    "Causal-only (1.0, 0.0)": [
+      1.0,
+      0.0
+    ],
+    "Persuasive-only (0.0, 1.0)": [
+      0.0,
+      1.0
+    ],
+    "Variance-optimized": [
+      0.6,
+      0.4
+    ]
+  },
+  "influence_results": {
+    "Equal (0.5, 0.5)": {
+      "group_means": {
+        "mean": {
+          "Foreign": 2.793435229292973,
+          "Left": 3.2764608612171977
+        },
+        "std": {
+          "Foreign": 0.28738698471098756,
+          "Left": 0.8103518468197483
+        },
+        "count": {
+          "Foreign": 20,
+          "Left": 500
+        }
+      },
+      "amplification_factors": {
+        "Left": 1.172914562993637
+      },
+      "foreign_baseline": 2.793435229292973
+    },
+    "Causal-heavy (0.7, 0.3)": {
+      "group_means": {
+        "mean": {
+          "Foreign": 2.9954917494889473,
+          "Left": 3.7121995009899185
+        },
+        "std": {
+          "Foreign": 0.3289115006648054,
+          "Left": 0.9945335391327895
+        },
+        "count": {
+          "Foreign": 20,
+          "Left": 500
+        }
+      },
+      "amplification_factors": {
+        "Left": 1.2392621350478588
+      },
+      "foreign_baseline": 2.9954917494889473
+    },
+    "Persuasive-heavy (0.3, 0.7)": {
+      "group_means": {
+        "mean": {
+          "Foreign": 2.5913787090969986,
+          "Left": 2.8407222214444765
+        },
+        "std": {
+          "Foreign": 0.3147796988551028,
+          "Left": 0.7535901684252962
+        },
+        "count": {
+          "Foreign": 20,
+          "Left": 500
+        }
+      },
+      "amplification_factors": {
+        "Left": 1.0962204063312557
+      },
+      "foreign_baseline": 2.5913787090969986
+    },
+    "Causal-only (1.0, 0.0)": {
+      "group_means": {
+        "mean": {
+          "Foreign": 3.298576529782909,
+          "Left": 4.365807460649
+        },
+        "std": {
+          "Foreign": 0.4748496208526519,
+          "Left": 1.3944856080403474
+        },
+        "count": {
+          "Foreign": 20,
+          "Left": 500
+        }
+      },
+      "amplification_factors": {
+        "Left": 1.3235428740943385
+      },
+      "foreign_baseline": 3.298576529782909
+    },
+    "Persuasive-only (0.0, 1.0)": {
+      "group_means": {
+        "mean": {
+          "Foreign": 2.2882939288030375,
+          "Left": 2.1871142617853954
+        },
+        "std": {
+          "Foreign": 0.4502675552138357,
+          "Left": 0.9442420583461896
+        },
+        "count": {
+          "Foreign": 20,
+          "Left": 500
+        }
+      },
+      "amplification_factors": {
+        "Left": 0.9557837978136982
+      },
+      "foreign_baseline": 2.2882939288030375
+    },
+    "Variance-optimized": {
+      "group_means": {
+        "mean": {
+          "Foreign": 2.8944634893909607,
+          "Left": 3.494330181103558
+        },
+        "std": {
+          "Foreign": 0.30021028898195956,
+          "Left": 0.8901835087004372
+        },
+        "count": {
+          "Foreign": 20,
+          "Left": 500
+        }
+      },
+      "amplification_factors": {
+        "Left": 1.207246245776214
+      },
+      "foreign_baseline": 2.8944634893909607
+    }
+  },
+  "evaluation_results": {
+    "Equal (0.5, 0.5)": {
+      "f_statistic": 7.059015310707196,
+      "p_value": 0.008130086006808198,
+      "component_correlations": {
+        "causal": 0.8160797320142298,
+        "persuasive": 0.5085203995527252
+      },
+      "variance_ratio": 0.18141646905408437,
+      "effect_sizes": {
+        "us_vs_foreign": 0.7944858405596463
+      }
+    },
+    "Causal-heavy (0.7, 0.3)": {
+      "f_statistic": 10.324435214502424,
+      "p_value": 0.0013945068806412895,
+      "component_correlations": {
+        "causal": 0.9594854791163689,
+        "persuasive": 0.20150102406381867
+      },
+      "variance_ratio": 0.26369768176240405,
+      "effect_sizes": {
+        "us_vs_foreign": 0.9676057043137409
+      }
+    },
+    "Persuasive-heavy (0.3, 0.7)": {
+      "f_statistic": 2.1710802703400414,
+      "p_value": 0.14123481474224167,
+      "component_correlations": {
+        "causal": 0.4871259880722935,
+        "persuasive": 0.8300875506280533
+      },
+      "variance_ratio": 0.05632100337593301,
+      "effect_sizes": {
+        "us_vs_foreign": 0.43177275248759533
+      }
+    },
+    "Causal-only (1.0, 0.0)": {
+      "f_statistic": 11.64129746161029,
+      "p_value": 0.000695464906405804,
+      "component_correlations": {
+        "causal": 0.9999999999999999,
+        "persuasive": -0.08264143676026364
+      },
+      "variance_ratio": 0.29659255934126866,
+      "effect_sizes": {
+        "us_vs_foreign": 1.0245574188600377
+      }
+    },
+    "Persuasive-only (0.0, 1.0)": {
+      "f_statistic": 0.22724883021972758,
+      "p_value": 0.63377235519961,
+      "component_correlations": {
+        "causal": -0.08264143676026364,
+        "persuasive": 1.0
+      },
+      "variance_ratio": 0.00591727996145881,
+      "effect_sizes": {
+        "us_vs_foreign": -0.13678337333487348
+      }
+    },
+    "Variance-optimized": {
+      "f_statistic": 9.026088662939673,
+      "p_value": 0.0027903390947780905,
+      "component_correlations": {
+        "causal": 0.9074327016699618,
+        "persuasive": 0.34376855171007575
+      },
+      "variance_ratio": 0.23110438560396174,
+      "effect_sizes": {
+        "us_vs_foreign": 0.9030241673637869
+      }
+    }
+  },
+  "theoretical_justification": {
+    "component_correlation": -0.07955404722854637,
+    "standardized_variance": {
+      "causal": 1.0,
+      "persuasive": 1.0,
+      "ratio": 1.0
+    },
+    "prevalence": {
+      "causal": 1.0,
+      "persuasive": 1.0
+    }
+  },
+  "visualization_path": "weighting_analysis.png"
+}

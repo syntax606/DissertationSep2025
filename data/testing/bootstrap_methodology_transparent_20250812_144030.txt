@@ -1,0 +1,40 @@
+
+BOOTSTRAP CONFIDENCE INTERVALS FROM ENHANCED ANALYSIS DATA
+==========================================================
+
+Data Source: Enhanced analysis files containing pre-calculated influence scores
+Analysis Date: 20250812_144030
+Random Seed: 42 (for reproducibility)
+
+Episode Counts:
+  Tenet Media: n = 405
+  US Left-wing: n = 2291
+  US Right-wing: n = 3741
+  Total: n = 6437
+
+Influence Score Calculation:
+  Formula: (causal_count + persuasive_count) / word_count × 1000
+  Where:
+    - causal_count = regex-matched causal patterns
+    - persuasive_count = keyword-matched persuasive techniques
+    - Normalized per 1000 words
+
+Bootstrap Results (1000 iterations):
+
+Tenet Media:
+  Mean: 5.454 (95% CI: [5.218, 5.700])
+  n = 405
+US Left-wing:
+  Mean: 4.782 (95% CI: [4.720, 4.844])
+  n = 2291
+US Right-wing:
+  Mean: 5.684 (95% CI: [5.630, 5.737])
+  n = 3741
+
+Right vs Left difference: 0.902 (95% CI: [0.821, 0.987])
+
+Amplification Factors (relative to Tenet baseline):
+  Right-wing: 1.042× (95% CI: [1.033×, 1.052×])
+  Left-wing: 0.877× (95% CI: [0.865×, 0.888×])
+
+All confidence intervals calculated using percentile bootstrap method.
