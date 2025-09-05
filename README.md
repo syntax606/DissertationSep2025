@@ -1,4 +1,4 @@
-🎙️ Podcast Influence Analysis
+Podcast Influence Analysis
 
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
@@ -7,16 +7,16 @@
 This repository contains the full computational framework and scripts for analyzing **influence operations in podcast media**.  
 The methodology integrates:
 
-- 🎧 **Automatic transcription** (Whisper)
-- 🏷 **Enrichment** with metadata & entity tagging  
-- 🗣 **Persuasion & blame detection**  
-- 📊 **Statistical analysis** with bootstrapping  
+- **Automatic transcription** (Whisper)
+- **Enrichment** with metadata & entity tagging  
+- **Persuasion & blame detection**  
+- **Statistical analysis** with bootstrapping  
 
 All scripts are modular and reproducible for research and dissertation work.
 
 
 
-📂 Repository Structure
+Repository Structure
 
 ```
 podcast-influence-analysis/
@@ -30,6 +30,31 @@ podcast-influence-analysis/
 │   ├── equal_weighting_justification_analysis.py
 │   └── political_discourse_analyzer2.py
 │
+├── data/       # Curated outputs used in dissertation & validation
+│   ├── samples/        # Example outputs
+│   │   ├── sample_output.json
+│   │   └── sample_tenet.json
+│   │
+│   ├── stats/          # Aggregated statistical outputs
+│   │   ├── master_stats_orientation_summary.csv
+│   │   ├── master_stats_per_show.csv
+│   │   ├── dissertation_stats_subset.json
+│   │   └── figure_orientation_ci.png
+│   │
+│   ├── dissertation/   # Final curated results
+│   │   ├── dissertation_key_findings.md
+│   │   ├── political_figures_analysis.json
+│   │   ├── russia_analysis_results.json
+│   │   ├── framing_analysis_visualization.png
+│   │   └── causal_analysis_blame_separated.png
+│   │
+│   └── testing/        # Validation & methodology tests
+│       ├── bootstrap_methodology_transparent.txt
+│       ├── computational_performance_formatted.txt
+│       ├── per_show_influence_scores.csv
+│       ├── weighting_justification.json
+│       └── weighting_analysis.png
+│
 ├── docs/       # Technical methodology and notes
 │   └── Methodology_Master_Synopsis.md
 │
@@ -38,7 +63,7 @@ podcast-influence-analysis/
 
 
 
-📊 Data Availability
+Data Availability
 
 This repository contains curated outputs from the full dissertation pipeline.  
 The raw podcast transcripts and bulk per-episode JSONs are stored in Google Cloud Storage (GCS) due to size, but representative and summary files are included here.
@@ -75,7 +100,7 @@ The raw podcast transcripts and bulk per-episode JSONs are stored in Google Clou
 
 
 
-🔗 Larger Data
+Larger Data
 
 - Full transcripts (`enriched_transcripts/`) and batch enhanced analyses (`enhanced_analysis/`) are stored in the **private GCS bucket**:  
   `gs://podcast-dissertation-audio/`  
@@ -84,7 +109,7 @@ The raw podcast transcripts and bulk per-episode JSONs are stored in Google Clou
 
 
 
-🚀 Key Scripts
+Key Scripts
 
 - **`meantime_transcribe.py`** → Transcribes podcasts using OpenAI Whisper.  
 - **`enrichment_pipeline.py`** → Enriches transcripts with entity detection, metadata, and rhetorical markers.  
@@ -97,7 +122,7 @@ The raw podcast transcripts and bulk per-episode JSONs are stored in Google Clou
 
 
 
-📖 Documentation
+Documentation
 
 See [`docs/Methodology_Master_Synopsis.md`](docs/Methodology_Master_Synopsis.md) for full methodological details, including:  
 - Influence score formula  
@@ -108,7 +133,7 @@ See [`docs/Methodology_Master_Synopsis.md`](docs/Methodology_Master_Synopsis.md)
 
 
 
-🔧 Setup & Usage
+Setup & Usage
 
 Clone this repository and install dependencies:
 
@@ -125,6 +150,6 @@ Due to size and copyright restrictions, full transcripts are hosted on Google Cl
 
 
 
-📜 License
+License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
