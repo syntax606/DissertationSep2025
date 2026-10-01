@@ -1,438 +1,208 @@
 #!/usr/bin/env python3
 """
-Equal Weighting Justification Analysis - FIXED VERSION
-Tests different weighting schemes for influence intensity metric
-Handles case where Tenet (Foreign) data may not be in enriched_transcripts
+Compare weighting schemes for the influence intensity metric on the real episode data.
+
+Rewritten. The published version could not find the Tenet episodes, so it generated 20 synthetic "Foreign" episodes
+from assumed values (np.random.normal around 3.2 causal and 2.25 persuasive per 1k words) and compared them with 500
+left-wing episodes and no right-wing ones. Its results therefore say nothing about the real data, and they did not
+match Table 3.2 of the dissertation either (equal weighting F = 7.06, causal-only F = 11.64, r = -0.08).
+
+This version:
+- reads every episode's causal and persuasive densities from the enhanced-analysis batch files (the same source as
+  the published influence scores), de-duplicated by source file, for all three groups: Tenet, right-wing, left-wing;
+- scores each episode as  w * causal_density + (1 - w) * persuasive_density  for each scheme;
+- reports, per scheme: one-way ANOVA across the three groups (F, p, eta squared), the Kruskal-Wallis test (the scores
+  are skewed), Cohen's d for each pair of groups, and group means;
+- reports the correlation between the two components;
+- generates nothing: if a group is missing it stops and says so.
+
+Note: the published formula, (causal + persuasive) / words x 1000, is exactly twice the equal-weighted score, so it
+ranks episodes identically and gives the same test statistics as the 0.5/0.5 row.
+
+Usage:
+    export DISSERTATION_DATA_DIR="/Volumes/Caro Drive/podcast-dissertation-audio"
+    python analysis/equal_weighting_justification_analysis.py --output-dir outputs/weighting
 """
 
-import json
-import numpy as np
-import pandas as pd
-from google.cloud import storage
-from scipy.stats import pearsonr, spearmanr, f_oneway
-from sklearn.preprocessing import StandardScaler
-import matplotlib.pyplot as plt
-import seaborn as sns
 import argparse
+import json
+import os
+import sys
+from collections import Counter
 from datetime import datetime
-import warnings
-warnings.filterwarnings('ignore')
 
-def load_episode_data(bucket_name, sample_size=500):
-    """Load episode data with causal and persuasive counts"""
-    
-    client = storage.Client()
-    bucket = client.bucket(bucket_name)
-    
-    episodes = []
-    
-    # Get enriched transcripts
-    for blob in bucket.list_blobs(prefix='enriched_transcripts/'):
-        if not blob.name.endswith('_enriched.json'):
-            continue
-            
-        if len(episodes) >= sample_size:
-            break
-            
-        try:
-            data = json.loads(blob.download_as_text())
-            
-            # Extract orientation - Fixed to handle only US podcasts
-            file_path = blob.name
-            if 'Left wing__' in file_path:
-                orientation = 'Left'
-                source = 'US'
-            elif 'Right wing__' in file_path:
-                orientation = 'Right'
-                source = 'US'
-            else:
-                continue  # Skip non-US podcasts for now
-            
-            # Count metrics
-            segments = data.get('segments', [])
-            text = data.get('text', '')
-            word_count = len(text.split()) if text else 0
-            
-            if word_count == 0:
+import numpy as np
+from scipy import stats
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from storage_backend import storage  # noqa: E402
+
+PROJECT_ID = "handy-vortex-459018-g0"
+BUCKET_NAME = "podcast-dissertation-audio"
+
+SCHEMES = {
+    "Causal-only (1.0, 0.0)": 1.0,
+    "Causal-heavy (0.7, 0.3)": 0.7,
+    "Variance-optimized (0.6, 0.4)": 0.6,
+    "Equal (0.5, 0.5)": 0.5,
+    "Persuasive-heavy (0.3, 0.7)": 0.3,
+    "Persuasive-only (0.0, 1.0)": 0.0,
+}
+GROUPS = ("Tenet", "Right wing", "Left wing")
+
+
+def orientation_of(blob_name):
+    base = blob_name.split("/")[-1]
+    if base.lower().startswith("tenet"):
+        return "Tenet"
+    if base.startswith("Right_wing_"):
+        return "Right wing"
+    if base.startswith("Left_wing_"):
+        return "Left wing"
+    return None
+
+
+def load_episodes():
+    bucket = storage.Client(project=PROJECT_ID).bucket(BUCKET_NAME)
+    episodes, seen, duplicates, files = [], set(), 0, 0
+    for prefix in ("tenet_enhanced_analysis/", "us_podcast_enhanced_analysis/"):
+        for blob in bucket.list_blobs(prefix=prefix):
+            if not (blob.name.endswith(".json") and "batch" in blob.name):
                 continue
-            
-            # Count causal relationships
-            causal_count = 0
-            for segment in segments:
-                segment_text = segment.get('text', '').lower()
-                causal_indicators = ['because', 'therefore', 'as a result', 'led to', 'caused by', 'due to']
-                if any(indicator in segment_text for indicator in causal_indicators):
-                    causal_count += 1
-            
-            # Count persuasive techniques
-            persuasive_count = sum(len(seg.get('persuasive_techniques', [])) for seg in segments)
-            
-            episodes.append({
-                'orientation': orientation,
-                'source': source,
-                'word_count': word_count,
-                'causal_count': causal_count,
-                'persuasive_count': persuasive_count,
-                'causal_density': causal_count / (word_count / 1000),
-                'persuasive_density': persuasive_count / (word_count / 1000)
-            })
-            
-        except Exception as e:
-            print(f"Error processing {blob.name}: {e}")
-            continue
-    
-    df = pd.DataFrame(episodes)
-    
-    # Add synthetic Foreign baseline if not present
-    if 'Foreign' not in df['orientation'].values and len(df) > 0:
-        print("Note: No Foreign (Tenet) episodes found. Using known baseline value of 5.45")
-        # Add a few synthetic Foreign episodes with known baseline characteristics
-        foreign_episodes = []
-        for i in range(20):
-            # Based on known Tenet baseline
-            base_causal = 3.2 + np.random.normal(0, 0.5)
-            base_persuasive = 2.25 + np.random.normal(0, 0.5)
-            foreign_episodes.append({
-                'orientation': 'Foreign',
-                'source': 'Tenet',
-                'word_count': 10000,
-                'causal_count': int(base_causal * 10),
-                'persuasive_count': int(base_persuasive * 10),
-                'causal_density': base_causal,
-                'persuasive_density': base_persuasive
-            })
-        foreign_df = pd.DataFrame(foreign_episodes)
-        df = pd.concat([df, foreign_df], ignore_index=True)
-    
-    return df
+            orientation = orientation_of(blob.name)
+            if orientation is None:
+                continue
+            files += 1
+            for ep in json.loads(blob.download_as_string()):
+                src = ep.get("metadata", {}).get("source_file", "")
+                if not src or src in seen:
+                    duplicates += 1
+                    continue
+                seen.add(src)
+                m = ep.get("influence_metrics", {})
+                if "causal_density_per_1k" not in m or "persuasive_density_per_1k" not in m:
+                    continue
+                episodes.append({
+                    "orientation": orientation,
+                    "causal": float(m["causal_density_per_1k"]),
+                    "persuasive": float(m["persuasive_density_per_1k"]),
+                    "influence_ratio": float(m.get("influence_ratio", np.nan)),
+                    "words": int(ep.get("metadata", {}).get("total_word_count", 0)),
+                })
+    return episodes, files, duplicates
 
-def calculate_influence_scores(df, weights):
-    """Calculate influence scores with different weighting schemes"""
-    
+
+def cohens_d(a, b):
+    a, b = np.asarray(a), np.asarray(b)
+    pooled = np.sqrt(((len(a) - 1) * a.var(ddof=1) + (len(b) - 1) * b.var(ddof=1)) / (len(a) + len(b) - 2))
+    return float((a.mean() - b.mean()) / pooled) if pooled else float("nan")
+
+
+def evaluate(episodes):
+    by = {g: [e for e in episodes if e["orientation"] == g] for g in GROUPS}
+    causal = np.array([e["causal"] for e in episodes])
+    persuasive = np.array([e["persuasive"] for e in episodes])
     results = {}
-    
-    for weight_name, (causal_weight, persuasive_weight) in weights.items():
-        # Calculate weighted influence score
-        df[f'influence_{weight_name}'] = (
-            causal_weight * df['causal_density'] + 
-            persuasive_weight * df['persuasive_density']
-        )
-        
-        # Calculate group means
-        group_means = df.groupby('orientation')[f'influence_{weight_name}'].agg(['mean', 'std', 'count'])
-        
-        # Calculate amplification factors (vs Foreign baseline)
-        foreign_mean = group_means.loc['Foreign', 'mean'] if 'Foreign' in group_means.index else 5.45
-        
-        amplification = {}
-        for orientation in ['Left', 'Right']:
-            if orientation in group_means.index:
-                amplification[orientation] = group_means.loc[orientation, 'mean'] / foreign_mean
-        
-        results[weight_name] = {
-            'group_means': group_means.to_dict(),
-            'amplification_factors': amplification,
-            'foreign_baseline': foreign_mean
-        }
-    
-    return results
-
-def evaluate_weighting_schemes(df, weights):
-    """Evaluate different weighting schemes"""
-    
-    evaluation = {}
-    
-    for weight_name in weights.keys():
-        influence_col = f'influence_{weight_name}'
-        
-        # 1. Discriminative power (F-statistic between groups)
-        groups = [group[influence_col].values for name, group in df.groupby('orientation') if len(group) > 1]
-        
-        if len(groups) >= 2:
-            f_stat, p_value = f_oneway(*groups)
-        else:
-            print(f"Warning: Not enough groups for ANOVA in {weight_name}")
-            f_stat, p_value = 0, 1
-        
-        # 2. Correlation between components
-        causal_corr = pearsonr(df['causal_density'], df[influence_col])[0]
-        persuasive_corr = pearsonr(df['persuasive_density'], df[influence_col])[0]
-        
-        # 3. Variance explained
-        total_variance = df[influence_col].var()
-        if len(df['orientation'].unique()) > 1:
-            between_group_var = df.groupby('orientation')[influence_col].mean().var()
-            variance_ratio = between_group_var / total_variance if total_variance > 0 else 0
-        else:
-            variance_ratio = 0
-        
-        # 4. Effect sizes (Cohen's d between key comparisons)
-        effect_sizes = {}
-        
-        # Right vs Left
-        if 'Right' in df['orientation'].values and 'Left' in df['orientation'].values:
-            right_data = df[df['orientation'] == 'Right'][influence_col]
-            left_data = df[df['orientation'] == 'Left'][influence_col]
-            
-            if len(right_data) > 0 and len(left_data) > 0:
-                pooled_std = np.sqrt((right_data.var() + left_data.var()) / 2)
-                if pooled_std > 0:
-                    effect_sizes['right_vs_left'] = (right_data.mean() - left_data.mean()) / pooled_std
-        
-        # US vs Foreign
-        if 'Foreign' in df['orientation'].values:
-            us_data = df[df['source'] == 'US'][influence_col]
-            foreign_data = df[df['orientation'] == 'Foreign'][influence_col]
-            
-            if len(us_data) > 0 and len(foreign_data) > 0:
-                pooled_std = np.sqrt((us_data.var() + foreign_data.var()) / 2)
-                if pooled_std > 0:
-                    effect_sizes['us_vs_foreign'] = (us_data.mean() - foreign_data.mean()) / pooled_std
-        
-        evaluation[weight_name] = {
-            'f_statistic': f_stat,
-            'p_value': p_value,
-            'component_correlations': {
-                'causal': causal_corr,
-                'persuasive': persuasive_corr
+    for name, w in SCHEMES.items():
+        scores = {g: np.array([w * e["causal"] + (1 - w) * e["persuasive"] for e in by[g]]) for g in GROUPS}
+        f, p = stats.f_oneway(*scores.values())
+        allv = np.concatenate(list(scores.values()))
+        grand = allv.mean()
+        ss_between = sum(len(v) * (v.mean() - grand) ** 2 for v in scores.values())
+        ss_total = ((allv - grand) ** 2).sum()
+        h, hp = stats.kruskal(*scores.values())
+        results[name] = {
+            "weights": [w, round(1 - w, 1)],
+            "anova_F": float(f), "anova_p": float(p), "eta_squared": float(ss_between / ss_total),
+            "kruskal_H": float(h), "kruskal_p": float(hp),
+            "group_means": {g: float(v.mean()) for g, v in scores.items()},
+            "group_sd": {g: float(v.std(ddof=1)) for g, v in scores.items()},
+            "cohens_d": {
+                "Right vs Left": cohens_d(scores["Right wing"], scores["Left wing"]),
+                "Tenet vs Right": cohens_d(scores["Tenet"], scores["Right wing"]),
+                "Tenet vs Left": cohens_d(scores["Tenet"], scores["Left wing"]),
+                "Tenet vs US": cohens_d(scores["Tenet"], np.concatenate([scores["Right wing"], scores["Left wing"]])),
             },
-            'variance_ratio': variance_ratio,
-            'effect_sizes': effect_sizes
         }
-    
-    return evaluation
+    r, rp = stats.pearsonr(causal, persuasive)
+    rho, rhop = stats.spearmanr(causal, persuasive)
+    return results, {"pearson_r": float(r), "pearson_p": float(rp), "spearman_rho": float(rho), "spearman_p": float(rhop)}
 
-def theoretical_justification(df):
-    """Analyze theoretical justification for equal weighting"""
-    
-    # Filter to only real data (not synthetic Foreign)
-    real_df = df[df['source'] == 'US']
-    
-    # 1. Component independence
-    causal_persuasive_corr = pearsonr(real_df['causal_density'], real_df['persuasive_density'])[0]
-    
-    # 2. Standardized contributions
-    scaler = StandardScaler()
-    causal_scaled = scaler.fit_transform(real_df['causal_density'].values.reshape(-1, 1)).flatten()
-    persuasive_scaled = scaler.fit_transform(real_df['persuasive_density'].values.reshape(-1, 1)).flatten()
-    
-    # Variance contributions
-    causal_var_contribution = np.var(causal_scaled)
-    persuasive_var_contribution = np.var(persuasive_scaled)
-    
-    # 3. Natural occurrence rates
-    causal_prevalence = (real_df['causal_count'] > 0).mean()
-    persuasive_prevalence = (real_df['persuasive_count'] > 0).mean()
-    
-    return {
-        'component_correlation': causal_persuasive_corr,
-        'standardized_variance': {
-            'causal': causal_var_contribution,
-            'persuasive': persuasive_var_contribution,
-            'ratio': causal_var_contribution / persuasive_var_contribution if persuasive_var_contribution > 0 else np.inf
-        },
-        'prevalence': {
-            'causal': causal_prevalence,
-            'persuasive': persuasive_prevalence
-        }
-    }
 
-def create_visualization(df, weights, output_path='weighting_analysis.png'):
-    """Create visualization comparing weighting schemes"""
-    
-    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
-    
-    # 1. Group means by weighting scheme
-    ax = axes[0, 0]
-    orientations = sorted(df['orientation'].unique())
-    weight_names = list(weights.keys())[:3]  # Show first 3
-    
-    x = np.arange(len(orientations))
-    width = 0.25
-    
-    for i, weight_name in enumerate(weight_names):
-        means = []
-        for orient in orientations:
-            orient_data = df[df['orientation'] == orient][f'influence_{weight_name}']
-            means.append(orient_data.mean() if len(orient_data) > 0 else 0)
-        
-        ax.bar(x + i*width - width, means, width, label=weight_name)
-    
-    ax.set_xlabel('Orientation')
-    ax.set_ylabel('Mean Influence Score')
-    ax.set_title('Influence Scores by Weighting Scheme')
-    ax.set_xticks(x)
-    ax.set_xticklabels(orientations)
-    ax.legend()
-    
-    # 2. Component scatter plot
-    ax = axes[0, 1]
-    for orient in orientations:
-        orient_data = df[df['orientation'] == orient]
-        if len(orient_data) > 0:
-            ax.scatter(orient_data['causal_density'], orient_data['persuasive_density'], 
-                      alpha=0.6, label=orient, s=50)
-    
-    ax.set_xlabel('Causal Density')
-    ax.set_ylabel('Persuasive Density')
-    ax.set_title('Component Relationship')
-    ax.legend()
-    
-    # 3. Effect sizes comparison
-    ax = axes[1, 0]
-    evaluation_results = evaluate_weighting_schemes(df, weights)
-    
-    effect_data = []
-    for weight_name, eval_data in evaluation_results.items():
-        for comparison, effect_size in eval_data['effect_sizes'].items():
-            effect_data.append({
-                'Weighting': weight_name,
-                'Effect Size': effect_size,
-                'Comparison': comparison.replace('_', ' ').title()
-            })
-    
-    if effect_data:
-        effect_df = pd.DataFrame(effect_data)
-        sns.barplot(data=effect_df, x='Weighting', y='Effect Size', hue='Comparison', ax=ax)
-        ax.set_title("Cohen's d Effect Sizes")
-        ax.axhline(y=0.8, color='r', linestyle='--', alpha=0.5, label='Large effect')
-        ax.axhline(y=0.5, color='orange', linestyle='--', alpha=0.5, label='Medium effect')
-        ax.tick_params(axis='x', rotation=45)
-    
-    # 4. F-statistics comparison
-    ax = axes[1, 1]
-    f_stats = [eval_data['f_statistic'] for eval_data in evaluation_results.values()]
-    ax.bar(evaluation_results.keys(), f_stats)
-    ax.set_xlabel('Weighting Scheme')
-    ax.set_ylabel('F-statistic')
-    ax.set_title('Discriminative Power (ANOVA F-statistic)')
-    ax.tick_params(axis='x', rotation=45)
-    
-    plt.tight_layout()
-    plt.savefig(output_path, dpi=300, bbox_inches='tight')
-    plt.close()
-    
-    return output_path
+def report(results, corr, counts, files, duplicates):
+    lines = [
+        "WEIGHTING SCHEMES FOR INFLUENCE INTENSITY: REAL DATA",
+        "=" * 60,
+        f"Generated {datetime.now():%Y-%m-%d %H:%M}",
+        f"Episodes: " + ", ".join(f"{g} {counts[g]}" for g in GROUPS) + f"  (from {files} batch files; {duplicates} duplicates skipped)",
+        "Score per episode = w x causal density + (1 - w) x persuasive density (both per 1,000 words).",
+        "",
+        f"Correlation between components: Pearson r = {corr['pearson_r']:.3f} (p = {corr['pearson_p']:.2g}), "
+        f"Spearman rho = {corr['spearman_rho']:.3f}",
+        "",
+        f"{'Scheme':<32}{'F':>9}{'eta2':>8}{'H':>9}  {'d R-L':>7}{'d T-R':>7}{'d T-L':>7}{'d T-US':>8}",
+    ]
+    for name, r in results.items():
+        d = r["cohens_d"]
+        lines.append(f"{name:<32}{r['anova_F']:>9.1f}{r['eta_squared']:>8.3f}{r['kruskal_H']:>9.1f}  "
+                     f"{d['Right vs Left']:>7.2f}{d['Tenet vs Right']:>7.2f}{d['Tenet vs Left']:>7.2f}{d['Tenet vs US']:>8.2f}")
+    best = max(results, key=lambda k: results[k]["anova_F"])
+    lines += [
+        "",
+        f"Highest F: {best}.",
+        "All p-values: " + ", ".join(f"{k.split(' (')[0]} {v['anova_p']:.2g}" for k, v in results.items()),
+        "",
+        "Group means of the equal-weighted score (x2 = the published influence intensity):",
+    ]
+    eq = results["Equal (0.5, 0.5)"]
+    for g in GROUPS:
+        lines.append(f"  {g:<11} {eq['group_means'][g]:.3f}  (x2 = {2 * eq['group_means'][g]:.3f}), SD {eq['group_sd'][g]:.3f}")
+    lines += [
+        "",
+        "Reading: F measures how well a scheme separates the three groups. A higher F is not by itself a reason to",
+        "prefer a scheme; the published metric is an unweighted sum, which is equivalent to the 0.5/0.5 row.",
+    ]
+    return "\n".join(lines)
 
-def generate_report(influence_results, evaluation_results, theory_results):
-    """Generate methodology report"""
-    
-    report = []
-    report.append("EQUAL WEIGHTING JUSTIFICATION ANALYSIS")
-    report.append("=" * 50)
-    report.append("")
-    
-    # Theoretical justification
-    report.append("Theoretical Justification for Equal Weighting:")
-    report.append(f"  Component correlation: r = {theory_results['component_correlation']:.3f}")
-    report.append(f"  Standardized variance ratio: {theory_results['standardized_variance']['ratio']:.2f}:1")
-    report.append(f"  Causal prevalence: {theory_results['prevalence']['causal']:.1%}")
-    report.append(f"  Persuasive prevalence: {theory_results['prevalence']['persuasive']:.1%}")
-    report.append("")
-    
-    # Weighting scheme comparison
-    report.append("Weighting Scheme Performance:")
-    report.append("-" * 40)
-    
-    for weight_name, eval_data in evaluation_results.items():
-        report.append(f"\n{weight_name}:")
-        report.append(f"  F-statistic: {eval_data['f_statistic']:.2f} (p = {eval_data['p_value']:.4f})")
-        report.append(f"  Variance explained: {eval_data['variance_ratio']:.1%}")
-        
-        if eval_data['effect_sizes']:
-            report.append("  Effect sizes:")
-            for comparison, d in eval_data['effect_sizes'].items():
-                report.append(f"    {comparison}: d = {d:.3f}")
-    
-    # Best performing scheme
-    best_scheme = max(evaluation_results.keys(), 
-                     key=lambda k: evaluation_results[k]['f_statistic'])
-    
-    report.append(f"\nOptimal weighting: {best_scheme}")
-    report.append(f"F-statistic: {evaluation_results[best_scheme]['f_statistic']:.2f}")
-    
-    # Methodology text
-    report.append("\n" + "="*50)
-    report.append("FOR METHODOLOGY SECTION:")
-    report.append("="*50)
-    
-    theory = theory_results
-    equal_eval = evaluation_results.get('Equal (0.5, 0.5)', {})
-    
-    report.append(f"""
-The influence intensity metric employs equal weighting (0.5 causal + 0.5 persuasive) 
-based on both theoretical and empirical justification. The low correlation between 
-causal and persuasive components (r = {theory['component_correlation']:.3f}) indicates they capture 
-distinct dimensions of influence. Standardized variance analysis shows both components 
-contribute similarly to overall variation (ratio = {theory['standardized_variance']['ratio']:.1f}:1).
-
-Empirical testing of alternative weighting schemes (causal-heavy: 0.7/0.3, 
-persuasive-heavy: 0.3/0.7, and variance-optimized) demonstrated that equal weighting 
-achieved comparable discriminative power (F = {equal_eval.get('f_statistic', 0):.1f}) while maintaining 
-theoretical interpretability. The scheme effectively differentiates between groups 
-with large effect sizes for key comparisons.
-""")
-    
-    return "\n".join(report)
 
 def main():
-    parser = argparse.ArgumentParser(description='Justify equal weighting in influence metric')
-    parser.add_argument('--bucket', default='podcast-dissertation-audio', help='GCS bucket name')
-    parser.add_argument('--sample-size', type=int, default=500, help='Number of episodes to analyze')
-    parser.add_argument('--output', default='weighting_justification.json', help='Output file')
-    
+    parser = argparse.ArgumentParser(description="Compare influence-metric weighting schemes on the real data")
+    parser.add_argument("--output-dir", default="outputs/weighting")
+    parser.add_argument("--no-plot", action="store_true")
     args = parser.parse_args()
-    
-    print("Loading episode data...")
-    df = load_episode_data(args.bucket, args.sample_size)
-    print(f"Loaded {len(df)} episodes")
-    print(f"Orientations present: {df['orientation'].value_counts().to_dict()}")
-    
-    # Define weighting schemes to test
-    weights = {
-        'Equal (0.5, 0.5)': (0.5, 0.5),
-        'Causal-heavy (0.7, 0.3)': (0.7, 0.3),
-        'Persuasive-heavy (0.3, 0.7)': (0.3, 0.7),
-        'Causal-only (1.0, 0.0)': (1.0, 0.0),
-        'Persuasive-only (0.0, 1.0)': (0.0, 1.0),
-        'Variance-optimized': (0.6, 0.4)  # Based on variance contributions
-    }
-    
-    print("\nCalculating influence scores with different weights...")
-    influence_results = calculate_influence_scores(df, weights)
-    
-    print("Evaluating weighting schemes...")
-    evaluation_results = evaluate_weighting_schemes(df, weights)
-    
-    print("Analyzing theoretical justification...")
-    theory_results = theoretical_justification(df)
-    
-    print("Creating visualizations...")
-    plot_path = create_visualization(df, weights)
-    
-    # Generate report
-    report = generate_report(influence_results, evaluation_results, theory_results)
-    print("\n" + report)
-    
-    # Save results
-    results = {
-        'sample_size': len(df),
-        'orientations_present': df['orientation'].value_counts().to_dict(),
-        'weighting_schemes': weights,
-        'influence_results': influence_results,
-        'evaluation_results': evaluation_results,
-        'theoretical_justification': theory_results,
-        'visualization_path': plot_path
-    }
-    
-    with open(args.output, 'w') as f:
-        json.dump(results, f, indent=2)
-    
-    # Save report
-    with open(args.output.replace('.json', '_report.txt'), 'w') as f:
-        f.write(report)
-    
-    print(f"\nResults saved to {args.output}")
+
+    episodes, files, duplicates = load_episodes()
+    counts = Counter(e["orientation"] for e in episodes)
+    missing = [g for g in GROUPS if counts[g] < 2]
+    if missing:
+        sys.exit(f"Not enough episodes for {', '.join(missing)} ({dict(counts)}). Nothing is generated to fill the gap.")
+
+    results, corr = evaluate(episodes)
+    text = report(results, corr, counts, files, duplicates)
+    print(text)
+
+    os.makedirs(args.output_dir, exist_ok=True)
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    with open(os.path.join(args.output_dir, f"weighting_real_data_{stamp}.json"), "w") as f:
+        json.dump({"episodes": dict(counts), "batch_files": files, "duplicates_skipped": duplicates,
+                   "component_correlation": corr, "schemes": results}, f, indent=2)
+    with open(os.path.join(args.output_dir, f"weighting_real_data_{stamp}.txt"), "w") as f:
+        f.write(text + "\n")
+
+    if not args.no_plot:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+
+        names = list(results)
+        fig, ax = plt.subplots(figsize=(8, 4))
+        ax.barh([n.split(" (")[0] for n in names][::-1], [results[n]["anova_F"] for n in names][::-1], color="#4a6fa5")
+        ax.set_xlabel("ANOVA F across Tenet, right-wing and left-wing episodes")
+        ax.set_title(f"Weighting schemes on real data (n = {len(episodes):,})")
+        fig.tight_layout()
+        fig.savefig(os.path.join(args.output_dir, f"weighting_real_data_{stamp}.png"), dpi=150)
+    print(f"\nSaved to {args.output_dir}/")
+
 
 if __name__ == "__main__":
     main()

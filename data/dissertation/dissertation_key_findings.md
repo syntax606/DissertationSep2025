@@ -1,3 +1,5 @@
+> **Correction note (September 2026).** The "techniques per episode" figures in section 2 come from a different count from Table 4.1 of the dissertation (Tenet: 4.8 persuasive instances per episode) and are not defined; see [`CORRECTIONS.md`](../../CORRECTIONS.md).
+
 # Dissertation Key Findings Summary
 
 ## 1. The Russia Mention Paradox

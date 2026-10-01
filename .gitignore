@@ -1,0 +1,6 @@
+# Outputs and private material: never commit
+outputs/
+validation_round*/
+*.log
+__pycache__/
+.venv/

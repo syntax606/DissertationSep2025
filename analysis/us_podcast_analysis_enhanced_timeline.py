@@ -12,7 +12,9 @@ import logging
 import time
 from datetime import datetime
 from collections import defaultdict, Counter
-from google.cloud import storage
+import os as _os, sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+from storage_backend import destination, is_local, storage  # local folder or GCS; see storage_backend.py
 
 # ========== CONFIG ==========
 PROJECT_ID = "handy-vortex-459018-g0"
@@ -395,7 +397,7 @@ def save_enhanced_batch_results(results, batch_num, show_name, political_orienta
     try:
         output_blob = bucket.blob(gcs_path)
         output_blob.upload_from_filename(local_path)
-        logger.info(f"☁️ Uploaded enhanced batch {batch_num} to gs://{BUCKET_NAME}/{gcs_path}")
+        logger.info(f"☁️ Uploaded enhanced batch {batch_num} to {destination(BUCKET_NAME, gcs_path)}")
     except Exception as e:
         logger.error(f"Failed to upload enhanced batch {batch_num}: {e}")
     
@@ -571,7 +573,7 @@ def main():
     try:
         summary_blob = bucket.blob(gcs_summary_path)
         summary_blob.upload_from_filename(summary_file)
-        logger.info(f"☁️ Enhanced summary uploaded to gs://{BUCKET_NAME}/{gcs_summary_path}")
+        logger.info(f"☁️ Enhanced summary uploaded to {destination(BUCKET_NAME, gcs_summary_path)}")
     except Exception as e:
         logger.error(f"Failed to upload enhanced summary: {e}")
     

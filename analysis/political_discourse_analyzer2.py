@@ -16,7 +16,9 @@ import json
 import re
 import os
 from collections import defaultdict, Counter
-from google.cloud import storage
+import os as _os, sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+from storage_backend import destination, is_local, storage  # local folder or GCS; see storage_backend.py
 import logging
 from datetime import datetime
 import pandas as pd
@@ -1552,7 +1554,8 @@ def main():
 
         # Upload to GCS
         print("\nUploading results to GCS...")
-        os.system(f'gsutil -m cp -r {OUTPUT_DIR}/*{timestamp}* gs://{BUCKET_NAME}/{OUTPUT_DIR}/')
+        if not is_local():
+            os.system(f'gsutil -m cp -r {OUTPUT_DIR}/*{timestamp}* gs://{BUCKET_NAME}/{OUTPUT_DIR}/')
         print("Upload complete!")
     else:
         print("Stopping after test batch.")

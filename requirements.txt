@@ -1,0 +1,22 @@
+# Analysis scripts (bootstrap, scoring, weighting, timing, discourse analysis)
+numpy>=1.24
+pandas>=2.0
+scipy>=1.10
+matplotlib>=3.7
+tqdm>=4.60
+
+# Only when reading from the original Google Cloud bucket instead of a local copy
+# google-cloud-storage>=2.10
+
+# Enrichment (enrichment_pipeline.py, computational_performance_analysis.py --models)
+# scikit-learn>=1.3
+# transformers>=4.40
+# torch>=2.1
+# sentence-transformers>=2.6
+
+# Transcription (meantime_transcribe.py, computational_performance_analysis.py --audio)
+# openai-whisper
+# requests>=2.31
+
+# Validation workbooks (validation/build_workbooks.py, score_validation.py)
+openpyxl>=3.1

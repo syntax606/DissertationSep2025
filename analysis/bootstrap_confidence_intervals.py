@@ -3,12 +3,22 @@
 Bootstrap Confidence Intervals for Major Findings
 Generates robust confidence intervals for all key statistics
 Updated to work with enriched transcript files
+
+
+NOTE (repair): this script recomputes a simplified influence score from the enriched transcripts (persuasive
+tags from enrichment_pipeline.py and six causal indicators counted at most once per segment). That is NOT the
+metric reported in the dissertation, and it gives different numbers (7.45 vs 5.00 on the same 25 Tenet
+episodes). The published confidence intervals come from transparent_bootstrap.py, which reads the scores in the
+enhanced-analysis files. Use that script to reproduce the dissertation.
 """
 
 import json
+import os
 import numpy as np
 import pandas as pd
-from google.cloud import storage
+import os as _os, sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+from storage_backend import destination, is_local, storage  # local folder or GCS; see storage_backend.py
 import argparse
 from datetime import datetime
 from scipy import stats
@@ -430,7 +440,8 @@ def save_results(results, methodology_text, output_dir='.'):
     """Save bootstrap results"""
     
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    
+    os.makedirs(output_dir, exist_ok=True)  # added: the script crashed if the folder didn't exist
+
     # Save detailed JSON results
     json_file = f"{output_dir}/bootstrap_analysis_{timestamp}.json"
     with open(json_file, 'w') as f:
@@ -532,7 +543,7 @@ def main():
                                     (dissertation_file, f'analysis_outputs/bootstrap_dissertation_format.txt')]:
             blob = bucket.blob(gcs_path)
             blob.upload_from_filename(local_file)
-            print(f"Uploaded {local_file} to gs://podcast-dissertation-audio/{gcs_path}")
+            print(f"Uploaded {local_file} to {destination('podcast-dissertation-audio', gcs_path)}")
 
 if __name__ == "__main__":
     main()

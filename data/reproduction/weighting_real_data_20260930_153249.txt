@@ -1,0 +1,26 @@
+WEIGHTING SCHEMES FOR INFLUENCE INTENSITY: REAL DATA
+============================================================
+Generated 2026-09-30 15:32
+Episodes: Tenet 405, Right wing 3741, Left wing 2291  (from 315 batch files; 1029 duplicates skipped)
+Score per episode = w x causal density + (1 - w) x persuasive density (both per 1,000 words).
+
+Correlation between components: Pearson r = 0.009 (p = 0.48), Spearman rho = 0.001
+
+Scheme                                  F    eta2        H    d R-L  d T-R  d T-L  d T-US
+Causal-only (1.0, 0.0)               79.0   0.024    155.6     0.31  -0.38  -0.08   -0.27
+Causal-heavy (0.7, 0.3)             140.5   0.042    254.8     0.45  -0.27   0.16   -0.11
+Variance-optimized (0.6, 0.4)       173.4   0.051    318.1     0.51  -0.21   0.28   -0.03
+Equal (0.5, 0.5)                    208.8   0.061    398.8     0.56  -0.13   0.40    0.07
+Persuasive-heavy (0.3, 0.7)         253.6   0.073    568.6     0.63   0.05   0.60    0.27
+Persuasive-only (0.0, 1.0)          212.7   0.062    527.2     0.55   0.27   0.69    0.46
+
+Highest F: Persuasive-heavy (0.3, 0.7).
+All p-values: Causal-only 1.2e-34, Causal-heavy 1.9e-60, Variance-optimized 4.7e-74, Equal 1.4e-88, Persuasive-heavy 9.9e-107, Persuasive-only 3.5e-90
+
+Group means of the equal-weighted score (x2 = the published influence intensity):
+  Tenet       2.727  (x2 = 5.454), SD 1.240
+  Right wing  2.842  (x2 = 5.683), SD 0.827
+  Left wing   2.391  (x2 = 4.781), SD 0.752
+
+Reading: F measures how well a scheme separates the three groups. A higher F is not by itself a reason to
+prefer a scheme; the published metric is an unweighted sum, which is equivalent to the 0.5/0.5 row.

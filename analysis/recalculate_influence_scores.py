@@ -9,7 +9,9 @@ import numpy as np
 from collections import defaultdict
 from datetime import datetime
 import os
-from google.cloud import storage
+import os as _os, sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+from storage_backend import destination, is_local, storage  # local folder or GCS; see storage_backend.py
 import argparse
 
 # Configuration
@@ -173,6 +175,7 @@ def analyze_episodes(episodes):
         influence_score = episode['influence_metrics']['influence_ratio']
         
         show_episodes[show_name].append({
+            'orientation': orientation,
             'influence_score': influence_score,
             'causal_density': episode['influence_metrics']['causal_density_per_1k'],
             'persuasive_density': episode['influence_metrics']['persuasive_density_per_1k'],
@@ -187,8 +190,9 @@ def analyze_episodes(episodes):
     for show_name, episodes in show_episodes.items():
         influence_scores = [ep['influence_score'] for ep in episodes]
         
-        # Find orientation for this show
-        show_orientation = next((e['orientation'] for e in episodes if e['show_name'] == show_name), 'unknown')
+        # Find orientation for this show. (Fixed: the original looked up e['show_name'] on these per-show
+        # records, which don't carry it, so this line always raised KeyError.)
+        show_orientation = episodes[0]['orientation'] if episodes else 'unknown'
         
         # Calculate bootstrap CIs
         influence_stats = calculate_bootstrap_ci(influence_scores, N_BOOTSTRAP)
@@ -389,7 +393,7 @@ def save_results(show_results, orientation_results, report, timestamp):
         for filename in [json_filename, report_filename, methodology_filename]:
             blob = bucket.blob(f'Testing_output/{filename}')
             blob.upload_from_filename(filename)
-            print(f"☁️  Uploaded {filename} to gs://{BUCKET_NAME}/Testing_output/{filename}")
+            print(f"☁️  Uploaded {filename} to {destination(BUCKET_NAME, 'Testing_output/' + filename)}")
             
     except Exception as e:
         print(f"⚠️  Failed to upload to GCS: {e}")
@@ -398,6 +402,7 @@ def main():
     parser = argparse.ArgumentParser(description='Recalculate influence scores from enhanced analysis files')
     parser.add_argument('--bootstrap', type=int, default=1000,
                        help='Number of bootstrap iterations (default: 1000)')
+    parser.add_argument('--seed', type=int, default=42, help='Random seed for the bootstrap (default: 42)')
     parser.add_argument('--quick', action='store_true',
                        help='Quick mode with fewer bootstrap iterations (100)')
     
@@ -405,6 +410,7 @@ def main():
     
     global N_BOOTSTRAP
     N_BOOTSTRAP = 100 if args.quick else args.bootstrap
+    np.random.seed(args.seed)  # added: resampling was unseeded, so results changed between runs
     
     print(f"🚀 Starting influence score recalculation with {N_BOOTSTRAP} bootstrap iterations...")
     print("📝 Using enhanced analysis files (same source as original 5-7 range scores)")
