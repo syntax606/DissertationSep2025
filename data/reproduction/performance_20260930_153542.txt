@@ -1,0 +1,14 @@
+PIPELINE TIMING (MEASURED)
+========================================
+Machine: macOS-26.5.2-arm64-arm-64bit-Mach-O, 8 CPUs, Python 3.13.3, mps
+
+Scoring (causal + keyword + persuasive), 100 episodes averaging 10,214 words:
+  median 0.031 s per episode (mean 0.042, 90th pct 0.093)
+  4.13 ms per 1,000 words; reading the file adds a median 0.208 s
+
+Enrichment models (emotion, sentiment) on 3 episodes (3,689 segments), after 62.7 s loading:
+  0.012 s per segment; median 8.4 s per episode
+  by model: emotion 6.3 ms, sentiment 5.9 ms per segment
+  not timed (library missing): embedding (pip install sentence-transformers)
+
+Transcription: not timed (run with --audio).

@@ -1,155 +1,81 @@
-Podcast Influence Analysis
+# Podcast Influence Analysis
 
-[![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![GitHub last commit](https://img.shields.io/github/last-commit/syntax606/DissertationSep2025)](https://github.com/syntax606/DissertationSep2025)
+Code and curated outputs for *Rhetorical Fingerprinting* (C. Swartz, MA dissertation, King's College London, 2025):
+a six-dimensional analysis of persuasive structure in 6,437 US political podcast episodes, including Tenet Media's
+catalogue.
 
-This repository contains the full computational framework and scripts for analyzing **influence operations in podcast media**.  
-The methodology integrates:
+**See [`CORRECTIONS.md`](CORRECTIONS.md)** for what was repaired in this version, the measured replacements for the
+weighting and timing analyses, and the claims that could not be checked.
 
-- **Automatic transcription** (Whisper)
-- **Enrichment** with metadata & entity tagging  
-- **Persuasion & blame detection**  
-- **Statistical analysis** with bootstrapping  
+The pipeline covers:
+- transcription with Whisper;
+- enrichment of every ~6-second segment: embeddings, emotion, sentiment, persuasive tags and topics;
+- influence intensity, (causal + persuasive) / words × 1,000, with keyword and blame analysis;
+- bootstrap confidence intervals.
 
-All scripts are modular and reproducible for research and dissertation work.
-
-
-
-Repository Structure
+## Repository structure
 
 ```
-podcast-influence-analysis/
-├── analysis/   # Core analysis scripts
-│   ├── meantime_transcribe.py
-│   ├── enrichment_pipeline.py
-│   ├── us_podcast_analysis_enhanced_timeline.py
-│   ├── tenet_enhanced_analysis.py
-│   ├── bootstrap_confidence_intervals.py
-│   ├── recalculate_influence_scores.py
-│   ├── equal_weighting_justification_analysis.py
-│   └── political_discourse_analyzer2.py
-│
-├── data/       # Curated outputs used in dissertation & validation
-│   ├── samples/        # Example outputs
-│   │   ├── sample_output.json
-│   │   └── sample_tenet.json
-│   │
-│   ├── stats/          # Aggregated statistical outputs
-│   │   ├── master_stats_orientation_summary.csv
-│   │   ├── master_stats_per_show.csv
-│   │   ├── dissertation_stats_subset.json
-│   │   └── figure_orientation_ci.png
-│   │
-│   ├── dissertation/   # Final curated results
-│   │   ├── dissertation_key_findings.md
-│   │   ├── political_figures_analysis.json
-│   │   ├── russia_analysis_results.json
-│   │   ├── framing_analysis_visualization.png
-│   │   └── causal_analysis_blame_separated.png
-│   │
-│   └── testing/        # Validation & methodology tests
-│       ├── bootstrap_methodology_transparent.txt
-│       ├── computational_performance_formatted.txt
-│       ├── per_show_influence_scores.csv
-│       ├── weighting_justification.json
-│       └── weighting_analysis.png
-│
-├── docs/       # Technical methodology and notes
-│   └── Methodology_Master_Synopsis.md
-│
-└── README.md   # This file
+analysis/
+  storage_backend.py                      run on a local copy of the data, or on the original GCS bucket
+  meantime_transcribe.py                  Whisper transcription
+  enrichment_pipeline.py                  segment enrichment (embeddings, emotion, sentiment, persuasion, topics)
+  tenet_enhanced_analysis.py              influence scores and keyword analysis, Tenet Media
+  us_podcast_analysis_enhanced_timeline.py   the same for a US show
+  transparent_bootstrap.py                the published confidence intervals (Chapter 4)
+  per_show_influence_bootstrap.py         per-show scores (Table 4.1)
+  recalculate_influence_scores.py         orientation and show summaries with bootstrap
+  bootstrap_confidence_intervals.py       a simplified variant of the score (not the published metric)
+  equal_weighting_justification_analysis.py  weighting schemes compared on the real data
+  computational_performance_analysis.py   measured processing time
+  political_discourse_analyzer2.py        entity-level blame and discourse analysis
+validation/                               human validation kit: blind sample, annotation workbooks, scoring
+data/
+  reproduction/   results re-measured in September 2026 (bootstrap, weighting, timing)
+  samples/  stats/  dissertation/  testing/   curated outputs (see CORRECTIONS.md for which to trust)
+docs/
+  Methodology_Master_Synopsis.md
 ```
 
-
-
-Data Availability
-
-This repository contains curated outputs from the full dissertation pipeline.  
-The raw podcast transcripts and bulk per-episode JSONs are stored in Google Cloud Storage (GCS) due to size, but representative and summary files are included here.
-
-
-`data/` Folder Overview
-
-- **samples**  
-  Small example outputs for transparency.  
-  - `sample_output.json` – representative enhanced transcript analysis  
-  - `sample_tenet.json` – Tenet baseline example
-
-- **stats**  
-  Aggregated statistical outputs.  
-  - `master_stats_orientation_summary.csv` – normalized comparison across orientations  
-  - `master_stats_per_show.csv` – per-show influence intensity scores  
-  - `dissertation_stats_subset.json` – subset used in dissertation tables  
-  - `figure_orientation_ci.png` – CI visualization
-
-- **dissertation**  
-  Final curated results used in the dissertation.  
-  - `dissertation_key_findings.md` – high-level summary  
-  - `political_figures_analysis.json` – entity-level blame & influence  
-  - `russia_analysis_results.json` – Russia-specific analysis  
-  - `framing_analysis_visualization.png` – persuasive framing visualization  
-  - `causal_analysis_blame_separated.png` – causal blame separation
-
-- **testing**  
-  Methodology validation and bootstrap runs.  
-  - `bootstrap_methodology_transparent.txt` – full bootstrap CI documentation  
-  - `computational_performance_formatted.txt` – runtime performance validation  
-  - `per_show_influence_scores.csv` – episode-level influence scores  
-  - `weighting_justification.json` / `weighting_analysis.png` – equal-weighting validation
-
-
-
-Larger Data
-
-- Full transcripts (`enriched_transcripts/`) and batch enhanced analyses (`enhanced_analysis/`) are stored in the **private GCS bucket**:  
-  `gs://podcast-dissertation-audio/`  
-- Contact the author if access is required for replication.
-
-
-
-
-Key Scripts
-
-- **`meantime_transcribe.py`** → Transcribes podcasts using OpenAI Whisper.  
-- **`enrichment_pipeline.py`** → Enriches transcripts with entity detection, metadata, and rhetorical markers.  
-- **`bootstrap_confidence_intervals.py`** → Runs statistical bootstrapping for confidence intervals.  
-- **`recalculate_influence_scores.py`** → Recomputes influence ratios with deduplication.  
-- **`equal_weighting_justification_analysis.py`** → Evaluates different weighting schemes for influence metrics.  
-- **`political_discourse_analyzer2.py`** → Full discourse analyzer: blame, persuasion, and influence metrics.  
-- **`tenet_enhanced_analysis.py`** / **`us_podcast_analysis_enhanced_timeline.py`** → Orientation- and timeline-specific analyses.  
-
-
-
-
-Documentation
-
-See [`docs/Methodology_Master_Synopsis.md`](docs/Methodology_Master_Synopsis.md) for full methodological details, including:  
-- Influence score formula  
-- Persuasion and blame detection  
-- Bootstrapping methodology  
-- Temporal and orientation-specific analysis  
-
-
-
-
-Setup & Usage
-
-Clone this repository and install dependencies:
+## Setup
 
 ```bash
-git clone https://github.com/syntax606/DissertationSep2025.git
-cd DissertationSep2025
+python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-
-Run an analysis script, e.g.:
-python analysis/bootstrap_confidence_intervals.py --bootstrap 1000
 ```
 
-Due to size and copyright restrictions, full transcripts are hosted on Google Cloud Storage. Researchers may request access by contacting me.
+`requirements.txt` covers the analysis scripts. Transcription and enrichment need extra packages, listed there as
+comments.
 
+## Running on the local data
 
+The data is laid out as in the original bucket (`enriched_transcripts/`, `tenet_enhanced_analysis/`,
+`us_podcast_enhanced_analysis/`, `audio/`…). Point the scripts at a local copy:
 
-License
+```bash
+export DISSERTATION_DATA_DIR="/path/to/podcast-dissertation-audio"
+export DISSERTATION_OUTPUT_DIR="$PWD/outputs"      # optional; anything the scripts "upload" goes here
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+python analysis/transparent_bootstrap.py                                   # Chapter 4 intervals
+python analysis/per_show_influence_bootstrap.py                            # Table 4.1
+python analysis/equal_weighting_justification_analysis.py                  # weighting schemes, real data
+python analysis/computational_performance_analysis.py --episodes 100 --models   # timing
+python analysis/tenet_enhanced_analysis.py                                 # re-score Tenet from transcripts
+python analysis/us_podcast_analysis_enhanced_timeline.py --show glenbeck --orientation "Right wing"
+python analysis/enrichment_pipeline.py podcast_transcripts/<show>/ -o enriched_transcripts_new/
+python analysis/meantime_transcribe.py "<PODCAST_NAME>"
+```
+
+To redo the human validation, see [`validation/README.md`](validation/README.md).
+
+The scripts never write into the data folder. Without `DISSERTATION_DATA_DIR` they read from and write to
+`gs://podcast-dissertation-audio` (needs `google-cloud-storage` and access to the bucket).
+
+## Data availability
+
+The full transcripts and per-episode files are not in this repository, because of their size and copyright. The
+`data/` folder holds summaries and samples. Contact the author about access for replication.
+
+## Licence
+
+MIT: see [LICENSE](LICENSE).

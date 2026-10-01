@@ -1,0 +1,61 @@
+{
+  "generated": "2026-09-30T15:33:17",
+  "machine": {
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "processor": "arm",
+    "cpu_count": 8,
+    "python": "3.13.3",
+    "torch": "2.13.0",
+    "accelerator": "mps"
+  },
+  "corpus_files_found": 6438,
+  "scoring": {
+    "episodes": 100,
+    "mean_words": 10213.98,
+    "per_episode_s": {
+      "n": 100,
+      "mean": 0.042172065461054446,
+      "median": 0.031227228697389364,
+      "p90": 0.09298495855182409,
+      "total": 4.217206546105444
+    },
+    "load_per_episode_s": {
+      "n": 100,
+      "mean": 0.3048405250627548,
+      "median": 0.20848745852708817,
+      "p90": 0.696370916441083,
+      "total": 30.484052506275475
+    },
+    "per_1k_words_s": 0.004128857258488311,
+    "stages_mean_s": {
+      "causal_s": 0.002622917462140322,
+      "topics_s": 0.02347788205370307,
+      "persuasive_s": 0.016071265945211053
+    }
+  },
+  "models": {
+    "timed": [
+      "emotion",
+      "sentiment"
+    ],
+    "not_timed": [
+      "embedding (pip install sentence-transformers)"
+    ],
+    "load_s": 62.67345950007439,
+    "episodes": 3,
+    "segments": 3689,
+    "per_episode_s": {
+      "n": 3,
+      "mean": 14.922945656813681,
+      "median": 8.397811106406152,
+      "p90": 8.397811106406152,
+      "total": 44.76883697044104
+    },
+    "per_segment_s": 0.012135764968945797,
+    "by_model_per_segment_s": {
+      "emotion": 0.006272124460557267,
+      "sentiment": 0.005863640508388529
+    }
+  }
+}

@@ -1,3 +1,5 @@
+> **Correction note (September 2026).** Some figures below are not supported by the code and data: the weighting results, the 0.54 s processing time and "real-time" claims, F = 847.3, the manual validation figure (301 samples), and the episode counts (6,432 here; 6,437 in the data). See [`CORRECTIONS.md`](../CORRECTIONS.md) for measured replacements and details.
+
 Methodology Master Doc Synopsis
 
 Your methodology represents a sophisticated three-layer computational framework for real-time detection of foreign influence operations in podcast media through environmental pattern analysis rather than source attribution. The approach combines intimate audio vulnerability research with systematic computational detection, creating the first real-time environmental monitoring system for foreign influence in podcast media.
